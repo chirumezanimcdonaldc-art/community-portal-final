@@ -11,8 +11,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const { userId, message } = await request.json();
     const { id } = await params;
     const eventId = parseInt(id, 10);
+    const requesterId = Number(userId);
 
-    if (isNaN(eventId) || !userId) {
+    if (isNaN(eventId) || isNaN(requesterId)) {
       return NextResponse.json(
         { error: 'Invalid event ID or user ID' },
         { status: 400 }
@@ -30,9 +31,30 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       );
     }
 
+    if (event.createdBy === requesterId) {
+      return NextResponse.json(
+        { error: 'Event organizers cannot request to join their own event' },
+        { status: 400 }
+      );
+    }
+
+    // Prevent new requests when the event is already full
+    const acceptedRequestsCount = await EventRequest.count({
+      where: { eventId, status: 'accepted' },
+    });
+
+    if (event.maxAttendees && acceptedRequestsCount >= event.maxAttendees) {
+      return NextResponse.json(
+        {
+          error: 'This event has reached capacity. New join requests cannot be submitted at this time.',
+        },
+        { status: 409 }
+      );
+    }
+
     // Check if user already requested
     const existingRequest = await EventRequest.findOne({
-      where: { eventId, userId },
+      where: { eventId, userId: requesterId },
     });
 
     if (existingRequest) {
@@ -45,13 +67,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     // Create join request
     const joinRequest = await EventRequest.create({
       eventId,
-      userId,
+      userId: requesterId,
       message: message?.trim() || null,
-      status: 'pending', // Add required status field
+      status: 'pending',
     });
 
     // Create notification for event creator
-    await NotificationService.createEventRequestNotification(eventId, userId);
+    await NotificationService.createEventRequestNotification(eventId, requesterId);
 
     const createdRequest = await EventRequest.findByPk(joinRequest.id, {
       include: [

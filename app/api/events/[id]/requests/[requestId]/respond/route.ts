@@ -11,14 +11,15 @@ export async function POST(
   { params }: { params: Promise<{ id: string; requestId: string }> }
 ) {
   try {
-    const { action } = await request.json();
+    const { action, userId } = await request.json();
     const { id, requestId } = await params;
     const eventId = parseInt(id, 10);
     const requestToUpdateId = parseInt(requestId, 10);
+    const organizerId = Number(userId);
 
-    if (isNaN(eventId) || isNaN(requestToUpdateId) || !action) {
+    if (isNaN(eventId) || isNaN(requestToUpdateId) || !action || isNaN(organizerId)) {
       return NextResponse.json(
-        { error: 'Invalid event ID, request ID, or action' },
+        { error: 'Invalid event ID, request ID, action, or user ID' },
         { status: 400 }
       );
     }
@@ -35,10 +36,6 @@ export async function POST(
     // Find the request
     const eventRequest = await EventRequest.findByPk(requestToUpdateId, {
       include: [
-        {
-          model: Event,
-          as: 'event',
-        },
         {
           model: User,
           as: 'user',
@@ -61,11 +58,39 @@ export async function POST(
       );
     }
 
+    const event = await Event.findByPk(eventId);
+    if (!event) {
+      return NextResponse.json(
+        { error: 'Event not found' },
+        { status: 404 }
+      );
+    }
+
+    if (event.createdBy !== organizerId) {
+      return NextResponse.json(
+        { error: 'Only the event organizer can approve or decline requests' },
+        { status: 403 }
+      );
+    }
+
     if (eventRequest.status !== 'pending') {
       return NextResponse.json(
         { error: 'Request has already been processed' },
         { status: 400 }
       );
+    }
+
+    if (action === 'accept' && event.maxAttendees) {
+      const acceptedCount = await EventRequest.count({
+        where: { eventId, status: 'accepted' },
+      });
+
+      if (acceptedCount >= event.maxAttendees) {
+        return NextResponse.json(
+          { error: 'Event is at capacity. No more attendees can be accepted.' },
+          { status: 409 }
+        );
+      }
     }
 
     // Update request status

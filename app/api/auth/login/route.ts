@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import sequelize from '../../../../lib/database';
 import User from '../../../../models/User';
 import { comparePassword, generateToken } from '../../../../lib/auth';
-import '../../../../lib/sync'; // Auto-sync database
 
 export async function POST(request: NextRequest) {
   try {
@@ -76,6 +75,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Login error:', error);
+    if (error instanceof Error) {
+      console.error(error.stack);
+    }
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

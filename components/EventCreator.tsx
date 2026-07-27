@@ -82,17 +82,20 @@ export default function EventCreator({ onEventCreated }: { onEventCreated: () =>
 
   if (!showForm) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div className="flex items-center justify-between">
+      <div className="bg-slate-900 text-white rounded-3xl shadow-xl p-6 mb-6 border border-slate-700">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Create an Event</h2>
-            <p className="text-sm text-gray-600 mt-1">Organize and manage your events</p>
+            <p className="uppercase tracking-[0.24em] text-xs text-slate-400 mb-2">Event Hub</p>
+            <h2 className="text-2xl font-semibold">Create an Event</h2>
+            <p className="text-sm text-slate-300 mt-1 max-w-xl">
+              Launch a polished event with a unique title, clear details, and strong visibility for your community.
+            </p>
           </div>
           <button
             onClick={() => setShowForm(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-flex items-center justify-center px-5 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full shadow-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-200"
           >
-            Create Event
+            Start Event Setup
           </button>
         </div>
       </div>
@@ -100,18 +103,24 @@ export default function EventCreator({ onEventCreated }: { onEventCreated: () =>
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-      <h2 className="text-lg font-semibold text-gray-900 mb-4">Create New Event</h2>
+    <div className="bg-white rounded-3xl shadow-xl p-8 mb-6 border border-slate-200">
+      <div className="mb-6">
+        <p className="uppercase tracking-[0.24em] text-xs text-slate-500 mb-2">New Event</p>
+        <h2 className="text-2xl font-semibold text-slate-900">Create New Event</h2>
+        <p className="mt-2 text-sm text-slate-600 max-w-2xl">
+          Add unique event details and avoid duplicates by choosing a distinctive event name, date, and location.
+        </p>
+      </div>
       
       {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+        <div className="mb-4 p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 text-sm" role="alert">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+          <label htmlFor="title" className="block text-sm font-medium text-slate-700 mb-1">
             Event Title *
           </label>
           <input
@@ -122,9 +131,10 @@ export default function EventCreator({ onEventCreated }: { onEventCreated: () =>
             onChange={handleChange}
             required
             maxLength={200}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-slate-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
             placeholder="Enter event title"
           />
+          <p className="mt-2 text-xs text-slate-500">Use a unique, descriptive title that stands out.</p>
         </div>
 
         <div>
@@ -198,14 +208,14 @@ export default function EventCreator({ onEventCreated }: { onEventCreated: () =>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="flex-1 px-5 py-3 bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-semibold rounded-2xl shadow-lg hover:from-sky-700 hover:to-indigo-700 disabled:opacity-50 transition-all duration-200"
           >
-            {loading ? 'Creating...' : 'Create Event'}
+            {loading ? 'Creating Event…' : 'Create Event'}
           </button>
           <button
             type="button"
             onClick={() => setShowForm(false)}
-            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+            className="px-5 py-3 bg-slate-100 text-slate-700 rounded-2xl hover:bg-slate-200 transition-all duration-200"
           >
             Cancel
           </button>

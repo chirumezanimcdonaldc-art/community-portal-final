@@ -4,7 +4,6 @@ import Post from '../../../../models/Post';
 import Like from '../../../../models/Like';
 import Comment from '../../../../models/Comment';
 import User from '../../../../models/User';
-import '../../../../lib/sync'; // Auto-sync database
 
 export async function GET(request: NextRequest) {
   try {

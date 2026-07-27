@@ -23,9 +23,5 @@ export const syncDatabase = async () => {
   }
 };
 
-// Auto-sync on import
-syncDatabase().then(() => {
-  console.log('Database sync completed');
-}).catch(err => {
-  console.error('Database sync failed:', err);
-});
+// Exported function only; do not auto-sync on import.
+

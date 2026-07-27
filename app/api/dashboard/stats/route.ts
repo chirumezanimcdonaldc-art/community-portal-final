@@ -4,19 +4,20 @@ import User from '../../../../models/User';
 import Post from '../../../../models/Post';
 import Like from '../../../../models/Like';
 import Comment from '../../../../models/Comment';
-import '../../../../lib/sync'; // Auto-sync database
+import Event from '../../../../models/Event';
 
 export async function GET(request: NextRequest) {
   try {
     await sequelize.authenticate();
 
-    const [userPostCount, totalPosts, totalUsers, totalLikes, totalComments] = await Promise.all([
+    const [userPostCount, totalPosts, totalUsers, totalLikes, totalComments, totalEvents] = await Promise.all([
       // Get user's post count (we'll need user ID from token/auth in a real app)
       Post.count(),
       Post.count(),
       User.count(),
       Like.count(),
       Comment.count(),
+      Event.count(),
     ]);
 
     // For now, we'll use a placeholder for user-specific data
@@ -27,6 +28,7 @@ export async function GET(request: NextRequest) {
       totalUsers,
       totalLikes,
       totalComments,
+      totalEvents,
     };
 
     return NextResponse.json(stats);

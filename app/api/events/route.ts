@@ -57,6 +57,23 @@ export async function POST(request: NextRequest) {
 
     await sequelize.authenticate();
 
+    const existingEvent = await Event.findOne({
+      where: {
+        title: title.trim(),
+        date: new Date(date),
+        location: location.trim(),
+      },
+    });
+
+    if (existingEvent) {
+      return NextResponse.json(
+        {
+          error: 'An event with this title, date, and location already exists. Please choose a different event name or schedule.',
+        },
+        { status: 409 }
+      );
+    }
+
     const event = await Event.create({
       title: title.trim(),
       description: description.trim(),
@@ -64,7 +81,7 @@ export async function POST(request: NextRequest) {
       location: location.trim(),
       maxAttendees: maxAttendees || null,
       createdBy,
-      status: 'upcoming', // Add required status field
+      status: 'upcoming',
     });
 
     const createdEvent = await Event.findByPk(event.id, {

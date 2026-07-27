@@ -42,8 +42,12 @@ export default function EventCard({ event, onEventUpdated }: { event: Event; onE
 
   const isCreator = user?.id === event.createdBy;
   const hasRequested = requests.some(req => req.userId === user?.id);
+  const userRequestStatus = requests.find(req => req.userId === user?.id)?.status;
   const acceptedCount = requests.filter(req => req.status === 'accepted').length;
   const pendingCount = requests.filter(req => req.status === 'pending').length;
+  const isFull = event.maxAttendees ? acceptedCount >= event.maxAttendees : false;
+  const isAccepted = userRequestStatus === 'accepted';
+  const isDeclined = userRequestStatus === 'declined';
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -98,7 +102,7 @@ export default function EventCard({ event, onEventUpdated }: { event: Event; onE
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ action }),
+        body: JSON.stringify({ action, userId: user?.id }),
       });
 
       const data = await response.json();
@@ -221,6 +225,9 @@ export default function EventCard({ event, onEventUpdated }: { event: Event; onE
       {/* Actions */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
+          {!isCreator && (
+            <span className="text-sm text-gray-500">Attendance requires organizer approval.</span>
+          )}
           {isCreator && (
             <>
               <button
@@ -231,18 +238,20 @@ export default function EventCard({ event, onEventUpdated }: { event: Event; onE
               </button>
             </>
           )}
-          {!isCreator && !hasRequested && (
+          {!isCreator && !hasRequested && !isFull && (
             <button
               onClick={() => setShowRequests(!showRequests)}
               className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Request to Join
+              Request approval to attend
             </button>
+          )}
+          {!isCreator && !hasRequested && isFull && (
+            <span className="text-sm text-red-600">This event is fully booked. No new join requests can be submitted.</span>
           )}
           {!isCreator && hasRequested && (
             <span className="text-sm text-gray-500">
-              {requests.find(req => req.userId === user?.id)?.status === 'pending' ? 'Request Pending' : 
-               requests.find(req => req.userId === user?.id)?.status === 'accepted' ? 'Accepted' : 'Declined'}
+              {isAccepted ? 'Request Accepted - You may attend' : isDeclined ? 'Request Declined' : 'Request Pending'}
             </span>
           )}
         </div>
@@ -266,10 +275,10 @@ export default function EventCard({ event, onEventUpdated }: { event: Event; onE
               <div className="flex space-x-3">
                 <button
                   onClick={handleJoinRequest}
-                  disabled={loading || hasRequested}
+                  disabled={loading || hasRequested || isFull}
                   className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
                 >
-                  {loading ? 'Sending...' : 'Send Request'}
+                  {loading ? 'Sending...' : isFull ? 'Event Full' : 'Send Request'}
                 </button>
                 <button
                   onClick={() => setShowRequests(false)}

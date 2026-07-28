@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import sequelize from '../../../lib/database';
 import Notification from '../../../models/Notification';
 import User from '../../../models/User';
-import '../../../lib/sync'; // Auto-sync database
 
 export async function GET(request: NextRequest) {
   try {

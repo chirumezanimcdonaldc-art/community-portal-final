@@ -21,6 +21,7 @@ class EventRequest extends Model<EventRequestAttributes> implements EventRequest
   declare message?: string;
   declare readonly createdAt: Date;
   declare readonly updatedAt: Date;
+  
 }
 
 EventRequest.init(

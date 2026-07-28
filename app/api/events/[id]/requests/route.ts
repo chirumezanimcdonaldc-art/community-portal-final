@@ -4,7 +4,6 @@ import EventRequest from '../../../../../models/EventRequest';
 import Event from '../../../../../models/Event';
 import User from '../../../../../models/User';
 import { NotificationService } from '../../../../../lib/notifications';
-import '../../../../../lib/sync'; // Auto-sync database
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

@@ -4,7 +4,7 @@ import Like from '../../../../../models/Like';
 import User from '../../../../../models/User';
 import Post from '../../../../../models/Post';
 import { NotificationService } from '../../../../../lib/notifications';
-import '../../../../../lib/sync'; // Auto-sync database sync
+
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

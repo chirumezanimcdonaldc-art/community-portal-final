@@ -4,7 +4,6 @@ import Comment from '../../../../../models/Comment';
 import User from '../../../../../models/User';
 import Post from '../../../../../models/Post';
 import { NotificationService } from '../../../../../lib/notifications';
-import '../../../../../lib/sync'; // Auto-sync database
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

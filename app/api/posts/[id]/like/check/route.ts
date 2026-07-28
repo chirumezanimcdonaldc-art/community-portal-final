@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import sequelize from '../../../../../../lib/database';
 import Like from '../../../../../../models/Like';
-import '../../../../../../lib/sync'; // Auto-sync database
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

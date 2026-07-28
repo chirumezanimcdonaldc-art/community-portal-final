@@ -4,7 +4,7 @@ import Post from '../../../../models/Post';
 import User from '../../../../models/User';
 import Like from '../../../../models/Like';
 import Comment from '../../../../models/Comment';
-import '../../../../lib/sync'; // Auto-sync database
+
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

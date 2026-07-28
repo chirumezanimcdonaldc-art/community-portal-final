@@ -3,7 +3,6 @@ import sequelize from '../../../lib/database';
 import Event from '../../../models/Event';
 import User from '../../../models/User';
 import EventRequest from '../../../models/EventRequest';
-import '../../../lib/sync'; // Auto-sync database
 
 export async function GET(request: NextRequest) {
   try {

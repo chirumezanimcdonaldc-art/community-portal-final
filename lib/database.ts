@@ -1,12 +1,25 @@
 import { Sequelize } from 'sequelize';
 import mysql2 from 'mysql2';
 
+const dbName = process.env.DB_NAME;
+const dbUser = process.env.DB_USER;
+const dbPassword = process.env.DB_PASSWORD;
+const dbHost = process.env.DB_HOST;
+const dbPort = process.env.DB_PORT;
+
+if (!dbName || !dbUser || !dbPassword || !dbHost) {
+  throw new Error(
+    'Missing required database environment variables. Please set DB_NAME, DB_USER, DB_PASSWORD, and DB_HOST.'
+  );
+}
+
 const sequelize = new Sequelize(
-  process.env.DB_NAME || "",
-  process.env.DB_USER || "",
-  process.env.DB_PASSWORD || "",
+  dbName,
+  dbUser,
+  dbPassword,
   {
-    host: process.env.DB_HOST || "",
+    host: dbHost,
+    port: dbPort ? Number(dbPort) : undefined,
     dialect: 'mysql',
     dialectModule: mysql2,
     logging: process.env.NODE_ENV === 'development' ? console.log : false,

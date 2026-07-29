@@ -7,15 +7,21 @@ import Event from '../models/Event';
 import EventRequest from '../models/EventRequest';
 import Notification from '../models/Notification';
 
+let hasSynced = false;
+
 export const syncDatabase = async () => {
+  if (hasSynced) {
+    return true;
+  }
+
   try {
     await sequelize.authenticate();
     console.log('Database connection established successfully.');
-    
-    // Sync without force to preserve existing data
+
     await sequelize.sync({ force: false });
     console.log('Database synchronized successfully.');
-    
+
+    hasSynced = true;
     return true;
   } catch (error) {
     console.error('Unable to sync database:', error);

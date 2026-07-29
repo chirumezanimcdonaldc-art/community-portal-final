@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import sequelize from '../../../../lib/database';
 import User from '../../../../models/User';
 import { comparePassword, generateToken } from '../../../../lib/auth';
+import { syncDatabase } from '../../../../lib/sync';
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await sequelize.authenticate();
+    await syncDatabase();
 
     const user = await User.findOne({
       where: { email },
